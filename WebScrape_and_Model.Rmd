@@ -1,0 +1,237 @@
+---
+title: "http_get"
+author: "Varun Khilnani"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(httr)
+library(rvest)
+get_zestimate_price <- function(address) {
+  address_url <- gsub(" ", "-", address)
+  url <- paste0("http://www.zillow.com/homes/", address_url)
+  headers <- c(
+    "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding" = "gzip, deflate",
+    "Accept-Language" = "en-US,en;q=0.9,ta;q=0.8",
+    "Cache-Control" = "no-cache",
+    "Connection" = "keep-alive",
+ ##   "Cookie" = "zguid=24%3F4f36dbb5a-2fdf-4b7d-ad6a-b8613b1eb9b19; zgsession=1lace236b9-1cdf-4e34-b525-ed6d19ddaed09; ##ftrspie=b1b6175c-b1b1-45d5-a057-819e02138564; _ga=GA1.4.217985634.1722278982; _gid=GA1.2.1998415442.1722278982; ##_ajs_anonymous_id=%22afdb65b5a-2bfd-4b7d-ad6a-b8613b1eb9b12%22; user_id=null; zg_anonymous_id=%226db468bd-33d4-4cb8-9c1a-efe6aee1bb6%22; ##AWSALB=chvCLwgHedtkF7gSCJlsNfVfmiUA1EOUwBMwUslwOMUy45oalEUTGD216AE7cikh5WDtZWiVykpjMrdmlGlnLQsgSoZJoLRpAOu3VOEdcBOguWtgNmf6NjFPWNNTy; ##_gcl_au=1.1.408095834.1722278986; search=%21724f8078000927c%3Daddress%3D515%26rect%3D39.1306570311917%2C-77.26358951249149%2C39.12900119350435%2C-77.240475497437##26%26p%3Dmap%26mapZoom%3Dout%26p%3Dlist%26ist%3Dprice%26list%3D%3D; PriceActiv=%3D173%3D%26price%3D%26is%3Dnull; ZIF=3DA3D%3D%26form%3DA&",
+    "Host" = "www.zillow.com",
+    "Pragma" = "no-cache",
+    "Referer" = "http://www.zillow.com/homes/",
+    "Upgrade-Insecure-Requests" = "1",
+    "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  )
+  response <- GET(url, add_headers(.headers = headers))
+  content <- content(response, "text")
+  page <- read_html(content)
+  zestimate <- page %>%
+    html_nodes(".Text-c11n-8-99-3__sc-aiai24-0.dFhjAe") %>%  # Replace with the correct CSS selector
+    html_text()
+  zestimate_price <- zestimate[1]
+  return(zestimate_price)
+}
+
+
+zestimate_price <- get_zestimate_price("14313 Brass Wheel Rd MD 20841")
+print(zestimate_price)
+
+
+
+
+
+```
+
+
+
+```{r}
+addresses[1]
+```
+
+```{r}
+library(httr)
+library(rvest)
+get_property_details <- function(address) {
+  address_url <- gsub(" ", "-", address)
+  url <- paste0("http://www.zillow.com/homes/", address_url)
+  headers <- c(
+    "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding" = "gzip, deflate",
+    "Accept-Language" = "en-US,en;q=0.9,ta;q=0.8",
+    "Cache-Control" = "no-cache",
+    "Connection" = "keep-alive",
+    "Host" = "www.zillow.com",
+    "Pragma" = "no-cache",
+    "Referer" = "http://www.zillow.com/homes/",
+    "Upgrade-Insecure-Requests" = "1",
+    "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  )
+  response <- GET(url, add_headers(.headers = headers))
+  content <- content(response, "text")
+  page <- read_html(content)
+  bedrooms <- page %>%
+    html_nodes("div[data-testid='bed-bath-sqft-fact-container']:nth-child(1) .Text-c11n-8-100-2__sc-aiai24-0.styles__StyledValueText-fshdp-8-100-2__sc-12ivusx-1") %>%
+    html_text()
+  bathrooms <- page %>%
+    html_nodes("div[data-testid='bed-bath-sqft-fact-container']:nth-child(2) .Text-c11n-8-100-2__sc-aiai24-0.styles__StyledValueText-fshdp-8-100-2__sc-12ivusx-1") %>%
+    html_text()
+  numbed <- bedrooms[1]  
+  return(numbed)
+}
+address <- "14313 Brass Wheel Rd Boyds MD 20841"
+print(address)
+numbed <- get_property_details(address)
+print(numbed)
+
+```
+
+
+```{r}
+library(httr)
+library(rvest)
+get_property_details <- function(address) {
+  address_url <- gsub(" ", "-", address)
+  url <- paste0("http://www.zillow.com/homes/", address_url)
+  headers <- c(
+    "Accept" = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+    "Accept-Encoding" = "gzip, deflate",
+    "Accept-Language" = "en-US,en;q=0.9,ta;q=0.8",
+    "Cache-Control" = "no-cache",
+    "Connection" = "keep-alive",
+    "Host" = "www.zillow.com",
+    "Pragma" = "no-cache",
+    "Referer" = "http://www.zillow.com/homes/",
+    "Upgrade-Insecure-Requests" = "1",
+    "User-Agent" = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+  )
+  response <- GET(url, add_headers(.headers = headers))
+  content <- content(response, "text")
+  page <- read_html(content)
+  bedrooms <- page %>%
+    html_nodes("div[data-testid='bed-bath-sqft-fact-container']:nth-child(1) .Text-c11n-8-100-2__sc-aiai24-0.styles__StyledValueText-fshdp-8-100-2__sc-12ivusx-1") %>%
+    html_text()
+  bathrooms <- page %>%
+    html_nodes("div[data-testid='bed-bath-sqft-fact-container']:nth-child(2) .Text-c11n-8-100-2__sc-aiai24-0.styles__StyledValueText-fshdp-8-100-2__sc-12ivusx-1") %>%
+    html_text()
+  numbath <- bedrooms[2]  
+  return(numbath)
+}
+address <- "14313 Brass Wheel Rd Boyds MD 20841"
+numbath <- get_property_details(address)
+print(numbath)
+
+```
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+
+# Create a data frame with 10 random real USA addresses
+addresses <- data.frame(
+  Address = c(
+    "14313 Brass Wheel Rd boyds md 20841",
+    "14311 Brass Wheel Rd boyds md 20841",
+    "14315 Brass Wheel Rd boyds md 20841"
+  )
+)
+
+# View the data frame
+print(addresses)
+
+```
+
+
+
+```{r}
+montnew_1000 <- head(montnew, 1000)
+```
+
+```{r}
+fulladd <- paste(montnew_1000$column1, montnew_1000$city, montnew_1000$state, montnew_1000$zip, sep = " ")
+df$new_column <- new_column
+```
+
+```{r}
+library(readxl)          
+library(dplyr)           
+
+
+
+
+montnew <- montnew %>%
+  mutate(across(everything(), ~ as.numeric(as.character(.)))) 
+
+
+
+montnew <- montnew %>%
+  mutate(across(where(is.numeric), ~ ifelse(is.na(.), median(., na.rm = TRUE), .)))
+
+str(montnew)  
+
+
+
+
+
+# Separate the feature matrix (X) and target vector (y)
+X <- as.matrix(montnew %>% select(-totalassm...77))  
+y <- as.matrix(montnew$totalassm...77)
+
+# Ensure X and y are numeric matrices
+X <- apply(X, 2, as.numeric)
+
+# Add an intercept term (a column of ones) to X
+X <- cbind(1, X)
+
+# Initialize theta (weights) with random values
+theta <- matrix(runif(ncol(X)), ncol = 1)
+
+# Define the cost function (Mean Squared Error)
+cost_function <- function(X, y, theta) {
+  m <- length(y)
+  predictions <- X %*% theta
+  cost <- (1/(2*m)) * sum((predictions - y)^2)
+  return(cost)
+}
+
+# Gradient Dissent Algorithm
+gradient_dissent <- function(X, y, theta, learning_rate, n_iterations) {
+  m <- length(y)
+  cost_history <- numeric(n_iterations)
+  
+  for (i in 1:n_iterations) {
+    predictions <- X %*% theta
+    errors <- predictions - y
+    gradients <- (1/m) * t(X) %*% errors
+    theta <- theta - learning_rate * gradients
+    cost_history[i] <- cost_function(X, y, theta)
+  }
+  
+  return(list(theta = theta, cost_history = cost_history))
+}
+
+
+
+learning_rate <- 0.01
+n_iterations <- 1000
+results <- gradient_dissent(X, y, theta, learning_rate, n_iterations)
+
+# Extract final model parameters (theta)
+final_theta <- results$theta
+
+plot(1:n_iterations, results$cost_history, type = "l", col = "blue", 
+     main = "Cost Function vs Iterations", xlab = "Iterations", ylab = "Cost")
+
+
+predictions <- X %*% final_theta
+
+# Compare predictions with the actual values
+comparison <- data.frame(Actual = y, Predicted = predictions)
+head(comparison)
+```
+```{r}
+install.packages("shiny")
+
+```
+
